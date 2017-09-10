@@ -18,7 +18,8 @@ TESTBINFILES := $(subst .cpp,,$(TESTSRCFILES))
 SRCFILES := $(notdir $(wildcard $(SRCDIR)/*.cpp))
 OBJFILES := $(subst .cpp,.o,$(SRCFILES))
 
-$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
+
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp 
 	$(CXX) -c $< $(CXXFLAGS) $(INCFLAGS) -o $@
 
 $(TESTBUILDDIR)/%.test: $(TESTSRCDIR)/%.test.cpp $(BUILDDIR)/%.o 
@@ -32,3 +33,6 @@ all: $(BUILDDIR)/$(OBJFILES)
 clean:
 	@rm -f $(TESTBUILDDIR)/*
 	@rm -f $(BUILDDIR)/*
+
+$(shell mkdir -p $(BUILDDIR))
+$(shell mkdir -p $(TESTBUILDDIR))
