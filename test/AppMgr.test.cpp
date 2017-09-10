@@ -9,8 +9,8 @@
 #include <boost/filesystem.hpp>
 #include <fmt/format.h>
 
-#include "../AppMgr.h"
-#include "../Exceptions.h"
+#include "AppMgr.h"
+#include "Exceptions.h"
 
 using namespace std;
 namespace fs = boost::filesystem;
