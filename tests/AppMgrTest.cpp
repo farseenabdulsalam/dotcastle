@@ -1,93 +1,76 @@
-#include "../AppMgr.h"
-#include "../Exceptions.h"
+#define BOOST_TEST_DYN_LINK
+#define BOOST_TEST_MODULE AppMgr
+#include <boost/test/included/unit_test.hpp>
 
 #include <iostream>
 #include <string>
+#include <vector>
+
 #include <boost/filesystem.hpp>
 #include <fmt/format.h>
+
+#include "../AppMgr.h"
+#include "../Exceptions.h"
 
 using namespace std;
 namespace fs = boost::filesystem;
 
+
 // ----- Basic setup
 
-fs::path give_a_valid_dotcastle_dir() {
-  auto temp_path = fs::temp_directory_path();
-  auto dotcastle_dir = temp_path / "temp_dotcastle";
-  fs::create_directory(dotcastle_dir);
-  return dotcastle_dir;
-}
+struct fixture_base {
+  fs::path dotcastle_dir;
+};
 
-fs::path give_an_invalid_dotcastle_dir() {
-  auto temp_path = fs::temp_directory_path();
-  auto dotcastle_dir = temp_path / "temp_dotcastle";
-  fs::remove_all(dotcastle_dir);
-  return dotcastle_dir;
-}
+struct fixture_valid_dotcastle_dir : public fixture_base {
+  fixture_valid_dotcastle_dir() { // setup
+    auto temp_path = fs::temp_directory_path();
+    dotcastle_dir = temp_path / "temp_dotcastle";
+    fs::create_directory(dotcastle_dir);
+  }
+  ~fixture_valid_dotcastle_dir() { // teardown
+    fs::remove_all(dotcastle_dir);
+  }
+};
 
-// ------ Test list_apps()
+struct fixture_invalid_dotcastle_dir : public fixture_base {
+  fixture_invalid_dotcastle_dir() { // setup
+    auto temp_path = fs::temp_directory_path();
+    dotcastle_dir = temp_path / "temp_dotcastle";
+    fs::remove_all(dotcastle_dir);
+  }
+  ~fixture_invalid_dotcastle_dir() { // teardown
+    fs::remove_all(dotcastle_dir);
+  }
+};
 
-bool list_apps_normal() {
-  auto dotcastle_dir = give_a_valid_dotcastle_dir();
-  struct AppTest {
-    string name;
-    bool tested_ok;
-  };
-  AppTest apps_test[3];
+
+BOOST_FIXTURE_TEST_CASE (list_apps_normal, fixture_valid_dotcastle_dir) {
+  // fs::path dotcastle_dir from fixture
+  vector<App> created_apps;
   for(int i=0;i<3;i++) {
-    apps_test[i] = AppTest {fmt::format("app_{0}",i), false};
-    fs::create_directory(dotcastle_dir/apps_test[i].name);
+    string app_name = fmt::format("app_{0}",i);
+    created_apps.push_back({app_name});
+    fs::create_directory(dotcastle_dir/app_name);
   }
-
   AppMgr app_mgr(dotcastle_dir.string());
-  auto apps_list = app_mgr.list_apps();
-  for(App &app: apps_list) {
-    for(AppTest &app_test: apps_test) {
-      if(app_test.tested_ok) continue;
-      if(app_test.name.compare(app.name)==0) {
-        app_test.tested_ok = true;
-        break;
-      } 
+  auto listed_apps = app_mgr.list_apps();
+  for(auto app: created_apps) {
+    bool found = false;
+    for(auto app_listed: listed_apps) { 
+      if(app.name==app_listed.name) {
+        found = true; break;
+      }
     }
+    BOOST_CHECK( found, "App "+app.name+" not listed.");
   }
-
-  bool all_test_passed = true;
-  for(AppTest app_test: apps_test) {
-    if(app_test.tested_ok) continue;
-    cout<<" ERROR: App "<<app_test.name<<" was not listed."<<endl;
-    all_test_passed = false;
-  }
-  cout<<(all_test_passed?"PASSED":"FAILED")<<": AppMgr::list_apps() test."<<endl;
-  fs::remove_all(dotcastle_dir);
-  return all_test_passed;
 }
 
-bool list_apps_exception() {
-  auto dotcastle_dir = give_an_invalid_dotcastle_dir();
+BOOST_FIXTURE_TEST_CASE (list_apps_exception, fixture_invalid_dotcastle_dir) {
+  // fs::path dotcastle_dir from fixture
   AppMgr app_mgr(dotcastle_dir.string());
-  try {
-    app_mgr.list_apps();
-    cout<<"FAILED: Exception not thrown - InvalidDotcastleDir"<<endl;
-    return false;
-  } catch (InvalidDotcastleDir& d) {
-    cout<<"PASSED: Exception caught - InvalidDotcastleDir"<<endl;
-    return true;
-  }
+  BOOST_CHECK_THROW(app_mgr.list_apps(),InvalidDotcastleDir)
 }
   
     
-
-// --- MAIN ----
-
-int main() {
-  bool all_test_passed = true;
-  all_test_passed &= list_apps_normal();
-  all_test_passed &= list_apps_exception();
-  
-  if(all_test_passed)
-    cout<<"* All tests have passed successfully."<<endl;
-  else
-    cout<<"* Some tests have failed."<<endl;
-  return all_test_passed?0:-1;
-}
 
