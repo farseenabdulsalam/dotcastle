@@ -1,14 +1,27 @@
+CXX := clang++
+CXXFLAGS := -std=c++14 -Wall
+INC := -I include
+LIB := -lboost
 
-CXX=clang++
-CXXFLAGS=-std=c++14
 
-COMPILE-CXX=$(CXX) -c $< $(CXXFLAGS) -o $@
+SRCDIR := src
+BUILDDIR := build
+INCDIR := include
+TESTSRCDIR := test
+TESTBUILDDIR := $(TESTSRCDIR)/build
 
-build/%.o: %.cpp
-	$(COMPILE-CXX)
+$(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
+	echo $@
+	echo $^
+	echo $<
+	#$(CXX) -c $< $(CXXFLAGS) $(INC) $(LIB) -o $@
 
-tests/build/%.o: tests/%.cpp
-	$(COMPILE-CXX)
+$(TESTBUILDDIR)/%.test: $(BUILDDIR)/%.o $(TESTSRCDIR)/%.test.cpp
+	$(CXX) $< $(CXXFLAGS) -o $@
+
+testall: $(wildcard $(TESTBUILDDIR)/*.test)
+	echo $^
+	for i in $@; do echo $i; done
 
 clean:
 	@rm -f tests/build/*
