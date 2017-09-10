@@ -1,27 +1,34 @@
-CXX := clang++
-CXXFLAGS := -std=c++14 -Wall
-INC := -I include
-LIB := -lboost
-
-
 SRCDIR := src
 BUILDDIR := build
 INCDIR := include
+
 TESTSRCDIR := test
 TESTBUILDDIR := $(TESTSRCDIR)/build
 
-TESTSRCFILES := $(wildcard $(TESTSRCDIR)/*.cpp)
+CXX := clang++
+CXXFLAGS := -std=c++14 -Wall
+INCFLAGS := -I $(INCDIR)
+LIBFLAGS := -lboost_system -lboost_filesystem -lfmt
+
+TESTLIBFLAGS := -lboost_unit_test_framework
+
+TESTSRCFILES := $(notdir $(wildcard $(TESTSRCDIR)/*.cpp))
 TESTBINFILES := $(subst .cpp,,$(TESTSRCFILES))
 
+SRCFILES := $(notdir $(wildcard $(SRCDIR)/*.cpp))
+OBJFILES := $(subst .cpp,.o,$(SRCFILES))
+
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
-	$(CXX) -c $< $(CXXFLAGS) $(INC) $(LIB) -o $@
+	$(CXX) -c $< $(CXXFLAGS) $(INCFLAGS) -o $@
 
 $(TESTBUILDDIR)/%.test: $(TESTSRCDIR)/%.test.cpp $(BUILDDIR)/%.o 
-	$(CXX) $^ $(INC) $(LIB) $(CXXFLAGS) -o $@
+	$(CXX) $^ $(INCFLAGS) $(LIBFLAGS) $(TESTLIBFLAGS) $(CXXFLAGS) -o $@
 
-tests: $(TESTBINFILES)
-	for i in $^; do echo $i;$i; done
+tests: $(TESTBUILDDIR)/$(TESTBINFILES)
+	@for i in $^; do echo $$i;$$i; done
+
+all: $(BUILDDIR)/$(OBJFILES)
 
 clean:
-	@rm -f tests/build/*
-	@rm -f build/*
+	@rm -f $(TESTBUILDDIR)/*
+	@rm -f $(BUILDDIR)/*
