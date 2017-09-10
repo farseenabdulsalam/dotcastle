@@ -10,18 +10,17 @@ INCDIR := include
 TESTSRCDIR := test
 TESTBUILDDIR := $(TESTSRCDIR)/build
 
+TESTSRCFILES := $(wildcard $(TESTSRCDIR)/*.cpp)
+TESTBINFILES := $(subst .cpp,,$(TESTSRCFILES))
+
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
-	echo $@
-	echo $^
-	echo $<
-	#$(CXX) -c $< $(CXXFLAGS) $(INC) $(LIB) -o $@
+	$(CXX) -c $< $(CXXFLAGS) $(INC) $(LIB) -o $@
 
-$(TESTBUILDDIR)/%.test: $(BUILDDIR)/%.o $(TESTSRCDIR)/%.test.cpp
-	$(CXX) $< $(CXXFLAGS) -o $@
+$(TESTBUILDDIR)/%.test: $(TESTSRCDIR)/%.test.cpp $(BUILDDIR)/%.o 
+	$(CXX) $^ $(INC) $(LIB) $(CXXFLAGS) -o $@
 
-testall: $(wildcard $(TESTBUILDDIR)/*.test)
-	echo $^
-	for i in $@; do echo $i; done
+tests: $(TESTBINFILES)
+	for i in $^; do echo $i;$i; done
 
 clean:
 	@rm -f tests/build/*
