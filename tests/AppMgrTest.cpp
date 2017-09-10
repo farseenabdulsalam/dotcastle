@@ -62,14 +62,14 @@ BOOST_FIXTURE_TEST_CASE (list_apps_normal, fixture_valid_dotcastle_dir) {
         found = true; break;
       }
     }
-    BOOST_CHECK( found, "App "+app.name+" not listed.");
+    BOOST_CHECK_MESSAGE( found, "App "+app.name+" not listed.");
   }
 }
 
 BOOST_FIXTURE_TEST_CASE (list_apps_exception, fixture_invalid_dotcastle_dir) {
   // fs::path dotcastle_dir from fixture
   AppMgr app_mgr(dotcastle_dir.string());
-  BOOST_CHECK_THROW(app_mgr.list_apps(),InvalidDotcastleDir)
+  BOOST_CHECK_THROW(app_mgr.list_apps(),InvalidDotcastleDir);
 }
   
     
