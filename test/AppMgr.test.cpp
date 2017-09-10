@@ -56,13 +56,13 @@ BOOST_FIXTURE_TEST_CASE (list_apps_normal, fixture_valid_dotcastle_dir) {
   AppMgr app_mgr(dotcastle_dir.string());
   auto listed_apps = app_mgr.list_apps();
   for(auto app: created_apps) {
-    bool found = false;
+    bool is_app_found = false;
     for(auto app_listed: listed_apps) { 
       if(app.name==app_listed.name) {
-        found = true; break;
+        is_app_found = true; break;
       }
     }
-    BOOST_CHECK_MESSAGE( found, "App "+app.name+" not listed.");
+    BOOST_CHECK_MESSAGE(/*ifnot*/ is_app_found,"App "+app.name+" not listed.");
   }
 }
 
