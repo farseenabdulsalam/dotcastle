@@ -8,7 +8,7 @@ TESTBUILDDIR := $(TESTSRCDIR)/build
 CXX := clang++
 CXXFLAGS := -std=c++14 -Wall
 INCFLAGS := -I $(INCDIR)
-LIBFLAGS := -lboost_system -lboost_filesystem -lfmt
+LIBFLAGS := -lboost_system -lboost_filesystem
 
 TESTLIBFLAGS := -lboost_unit_test_framework
 

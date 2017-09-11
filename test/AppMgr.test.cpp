@@ -1,13 +1,12 @@
 #define BOOST_TEST_DYN_LINK
 #define BOOST_TEST_MODULE AppMgr
-#include <boost/test/included/unit_test.hpp>
+#include <boost/test/unit_test.hpp>
 
 #include <iostream>
 #include <string>
 #include <vector>
 
 #include <boost/filesystem.hpp>
-#include <fmt/format.h>
 
 #include "AppMgr.h"
 #include "Exceptions.h"
@@ -49,7 +48,7 @@ BOOST_FIXTURE_TEST_CASE (list_apps, fixture_valid_dotcastle_dir) {
   // fs::path dotcastle_dir from fixture
   vector<App> created_apps;
   for(int i=0;i<3;i++) {
-    string app_name = fmt::format("app_{0}",i);
+    string app_name = string("app_")+(char)('0'+i);
     created_apps.push_back({app_name});
     fs::create_directory(dotcastle_dir/app_name);
   }
