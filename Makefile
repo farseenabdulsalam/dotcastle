@@ -22,7 +22,8 @@ OBJFILES := $(subst .cpp,.o,$(SRCFILES))
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp 
 	$(CXX) -c $< $(CXXFLAGS) $(INCFLAGS) -o $@
 
-$(TESTBUILDDIR)/%.test: $(TESTSRCDIR)/%.test.cpp $(BUILDDIR)/%.o 
+.SECONDEXPANSION: # looks like this needed for % to expand inside wildcard
+$(TESTBUILDDIR)/%: $(TESTSRCDIR)/%.cpp $(BUILDDIR)/$$(shell echo  $$* | sed -r s/_[a-zA-Z0-9_]+/.o/)
 	$(CXX) $^ $(INCFLAGS) $(LIBFLAGS) $(TESTLIBFLAGS) $(CXXFLAGS) -o $@
 
 tests: $(TESTBUILDDIR)/$(TESTBINFILES)
