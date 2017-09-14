@@ -108,3 +108,10 @@ app_dir_path/(config_group_name+".install");
 
 }
 
+BOOST_FIXTURE_TEST_CASE (make_app_non_existent_app,
+                         fixture_valid_dotcastle_dir) {
+  // fs::path dotcastle_dir from fixture
+  AppMgr app_mgr(dotcastle_dir.string());
+  BOOST_CHECK_THROW(app_mgr.make_config_group_of_app({"doesnt matter"},{"doesnt matter"}),
+                    NonExistentApp);
+}
