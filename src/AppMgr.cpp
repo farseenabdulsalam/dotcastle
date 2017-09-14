@@ -53,7 +53,21 @@ void AppMgr::make_config_group_of_app(ConfigGroup cg, App app) {
   if(!fs::is_directory(app_dir_path))
       throw NonExistentApp();
 
-  auto retcode = proc::call((app_dir_path/(cg.name+".make")).string());
+  auto retcode = proc::call((app_dir_path/(cg.name+".make")).string(), 
+                             cwd{app_dir_path});
+  if(retcode!=0) 
+    throw AppConfigGroupMakeFailed();
+}
+
+void AppMgr::install_config_group_of_app(ConfigGroup cg, App app) {
+  namespace proc = subprocess;
+  auto dotcastle_dir_path = get_dotcastle_dir_path(path_to_dotcastle_dir);
+  auto app_dir_path = dotcastle_dir_path / app.name;
+  if(!fs::is_directory(app_dir_path))
+      throw NonExistentApp();
+
+  auto retcode = proc::call((app_dir_path/(cg.name+".install")).string(),
+                             cwd{app_dir_path});
   if(retcode!=0) 
     throw AppConfigGroupMakeFailed();
 }
