@@ -2,6 +2,7 @@
 #include "Exceptions.h"
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/convenience.hpp>
+#include "cpp-subprocess/subprocess.hpp" 
 
 using namespace std;
 namespace fs = boost::filesystem;
@@ -45,3 +46,14 @@ list<ConfigGroup> AppMgr::list_config_groups_for_app(App app) {
   return config_groups_list;
 }
 
+void AppMgr::make_config_group_of_app(ConfigGroup cg, App app) {
+  namespace proc = subprocess;
+  auto dotcastle_dir_path = get_dotcastle_dir_path(path_to_dotcastle_dir);
+  auto app_dir_path = dotcastle_dir_path / app.name;
+  if(!fs::is_directory(app_dir_path))
+      throw NonExistentApp();
+
+  auto retcode = proc::call((app_dir_path/(cg.name+".make")).string());
+  if(retcode!=0) 
+    throw AppConfigGroupMakeFailed();
+}
