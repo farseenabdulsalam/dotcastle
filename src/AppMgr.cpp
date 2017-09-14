@@ -54,7 +54,7 @@ void AppMgr::make_config_group_of_app(ConfigGroup cg, App app) {
       throw NonExistentApp();
 
   auto retcode = proc::call((app_dir_path/(cg.name+".make")).string(), 
-                             cwd{app_dir_path});
+                             proc::cwd{app_dir_path.string()});
   if(retcode!=0) 
     throw AppConfigGroupMakeFailed();
 }
@@ -67,7 +67,7 @@ void AppMgr::install_config_group_of_app(ConfigGroup cg, App app) {
       throw NonExistentApp();
 
   auto retcode = proc::call((app_dir_path/(cg.name+".install")).string(),
-                             cwd{app_dir_path});
+                             proc::cwd{app_dir_path.string()});
   if(retcode!=0) 
     throw AppConfigGroupMakeFailed();
 }
