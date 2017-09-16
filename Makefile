@@ -26,7 +26,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp
 $(TESTBUILDDIR)/%: $(TESTSRCDIR)/%.cpp $(BUILDDIR)/$$(shell echo  $$* | sed -r s/_[a-zA-Z0-9_]+/.o/)
 	$(CXX) $^ $(INCFLAGS) $(LIBFLAGS) $(TESTLIBFLAGS) $(CXXFLAGS) -o $@
 
-tests: $(TESTBUILDDIR)/$(TESTBINFILES)
+tests: $(foreach file,$(TESTBINFILES),$(TESTBUILDDIR)/$(file))
 	@for i in $^; do echo $$i;$$i; done
 
 all: $(BUILDDIR)/$(OBJFILES)
