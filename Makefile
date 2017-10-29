@@ -8,7 +8,7 @@ TESTBUILDDIR := $(TESTSRCDIR)/build
 CXX := clang++
 CXXFLAGS := -std=c++14 -Wall
 INCFLAGS := -I $(INCDIR)
-LIBFLAGS := -lboost_system -lboost_filesystem
+LIBFLAGS := -lboost_system -lboost_filesystem -lboost_program_options
 
 TESTLIBFLAGS := -lboost_unit_test_framework
 
@@ -34,6 +34,9 @@ all: $(BUILDDIR)/$(OBJFILES)
 clean:
 	@rm -f $(TESTBUILDDIR)/*
 	@rm -f $(BUILDDIR)/*
+
+main: $(BUILDDIR)/main.o
+	$(CXX) $< $(LIBFLAGS) -o $@
 
 $(shell mkdir -p $(BUILDDIR))
 $(shell mkdir -p $(TESTBUILDDIR))
