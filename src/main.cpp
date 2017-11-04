@@ -1,15 +1,20 @@
 #include <iostream>
 #include <iterator>
+#include <set>
+#include <map>
 #include <boost/program_options.hpp>
 #include <boost/exception/all.hpp>
+#include <boost/filesystem.hpp>
+#include "AppMgr.h"
 
 using namespace std;
-
 namespace po = boost::program_options;
 
-//GLOBAL
-po::options_description opts_desc;
-char *exec_name;
+// GLOBALS
+char *exec_name;                      // init by main as argv[0]
+po::options_description opts_desc;    
+AppMgr app_mgr("/home/farzeen/dotcastle.tmp");
+// END OF GLOBALS
 
 void show_help();
 void list_all();
@@ -90,15 +95,43 @@ void show_help() {
 }
 
 void list_all() {
-  cout<<"List all"<<endl; //TODO
+  map<string,vector<string>> config_group_apps_map;
+  auto apps = app_mgr.list_apps();
+  for(App app: apps) {
+    auto config_groups = app_mgr.list_config_groups_for_app(app);
+    for(ConfigGroup cg: config_groups) {
+      config_group_apps_map[cg.name].push_back(app.name);
+    }
+  }
+  cout<<"Listing all config-groups and apps: "<<endl; 
+  for(auto pair : config_group_apps_map) {
+    cout<<" - "<<pair.first<<endl;
+    for(auto app : pair.second) {
+      cout<<"    - "<<app<<endl;
+    }
+  }
 }
 
 void list_config_groups() {
-  cout<<"List config groups"<<endl; //TODO
+  set<string> config_groups;
+  auto apps = app_mgr.list_apps();
+  for(App app: apps) {
+    auto config_groups_for_app = app_mgr.list_config_groups_for_app(app);
+    for(ConfigGroup cg: config_groups_for_app) {
+      config_groups.insert(cg.name);
+    }
+  }
+  cout<<"Listing all config-groups: "<<endl;
+  for(auto cg : config_groups) {
+    cout<<" - "<<cg<<endl;
+  }
 }
 
 void list_apps() {
-  cout<<"List apps"<<endl; //TODO
+  cout<<"Listing all apps: "<<endl; 
+  auto apps = app_mgr.list_apps();
+  for(App app: apps)
+    cout<<" - "<<app.name<<endl;
 }
 
 void make(string config_slash_appname) {
