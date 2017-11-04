@@ -35,7 +35,7 @@ clean:
 	@rm -f $(TESTBUILDDIR)/*
 	@rm -f $(BUILDDIR)/*
 
-main: $(BUILDDIR)/main.o
+dotcastle: $(BUILDDIR)/main.o
 	$(CXX) $< $(LIBFLAGS) -o $@
 
 $(shell mkdir -p $(BUILDDIR))
