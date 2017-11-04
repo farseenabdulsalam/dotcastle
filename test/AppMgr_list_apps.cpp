@@ -17,8 +17,8 @@ BOOST_FIXTURE_TEST_CASE (list_apps, fixture_valid_dotcastle_dir) {
   vector<App> created_apps;
   for(int i=0;i<3;i++) {
     string app_name = string("app_")+(char)('0'+i);
-    created_apps.push_back({app_name});
     fs::create_directory(dotcastle_dir/app_name);
+    created_apps.push_back({app_name});
   }
   AppMgr app_mgr(dotcastle_dir.string());
   auto listed_apps = app_mgr.list_apps();
@@ -40,10 +40,3 @@ BOOST_FIXTURE_TEST_CASE (list_apps_invalid_dotcastle_dir,
   BOOST_CHECK_THROW(app_mgr.list_apps(),InvalidDotcastleDir);
 }
 
-BOOST_FIXTURE_TEST_CASE (make_app_non_existent_app,
-                         fixture_valid_dotcastle_dir) {
-  // fs::path dotcastle_dir from fixture
-  AppMgr app_mgr(dotcastle_dir.string());
-  BOOST_CHECK_THROW(app_mgr.make_config_group_of_app({"doesnt matter"},{"doesnt matter"}),
-                    NonExistentApp);
-}
