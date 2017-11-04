@@ -5,7 +5,7 @@ INCDIR := include
 TESTSRCDIR := test
 TESTBUILDDIR := $(TESTSRCDIR)/build
 
-CXX := clang++
+CXX := g++
 CXXFLAGS := -std=c++14 -Wall
 INCFLAGS := -I $(INCDIR)
 LIBFLAGS := -lboost_system -lboost_filesystem -lboost_program_options
@@ -35,8 +35,8 @@ clean:
 	@rm -f $(TESTBUILDDIR)/*
 	@rm -f $(BUILDDIR)/*
 
-dotcastle: $(BUILDDIR)/main.o
-	$(CXX) $< $(LIBFLAGS) -o $@
+dotcastle: $(BUILDDIR)/main.o $(foreach file,$(OBJFILES),$(BUILDDIR)/$(file))
+	$(CXX) $^ $(LIBFLAGS) -o $@
 
 $(shell mkdir -p $(BUILDDIR))
 $(shell mkdir -p $(TESTBUILDDIR))
