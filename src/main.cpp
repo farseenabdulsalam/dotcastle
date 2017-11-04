@@ -11,9 +11,9 @@ using namespace std;
 namespace po = boost::program_options;
 
 // GLOBALS
-char *exec_name;                      // init by main as argv[0]
+char *exec_name;                               // init by main as argv[0]
 po::options_description opts_desc;    
-AppMgr app_mgr("/home/farzeen/dotcastle.tmp");
+AppMgr app_mgr("/home/farzeen/dotcastle.tmp"); // !!!! FIXME !!!!
 // END OF GLOBALS
 
 void show_help();
