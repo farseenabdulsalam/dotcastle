@@ -44,20 +44,22 @@ void process_cli_options_values(const po::variables_map &vm) {
     show_help();
     return;
   } 
+
   if (vm.count("list")) {
     list_all();
     return;
   } 
 
+  //
   if(vm.count("list-config-groups")) {
     list_config_groups();
   }
   if(vm.count("list-apps")) {
     list_apps();
   }
-
   if(vm.count("list-config-groups")||vm.count("list-apps"))
     return;
+  //
 
   if(vm.count("make")) {
     for (auto s : vm["make"].as<vector<string>>())
