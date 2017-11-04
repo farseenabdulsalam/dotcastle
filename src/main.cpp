@@ -2,6 +2,7 @@
 #include <iterator>
 #include <set>
 #include <map>
+#include <algorithm>
 #include <boost/program_options.hpp>
 #include <boost/exception/all.hpp>
 #include <boost/filesystem.hpp>
@@ -136,10 +137,48 @@ void list_apps() {
     cout<<" - "<<app.name<<endl;
 }
 
+
+pair<string,vector<string>> 
+__parse_config_slash_appname(string config_slash_appname) {
+  auto slash_pos = config_slash_appname.find("/");
+  string config_group = config_slash_appname.substr(0,slash_pos);  
+  vector<string> apps;
+
+  if(slash_pos == string::npos || 
+     slash_pos == config_slash_appname.size() - 1) {
+    for(auto app: app_mgr.list_apps()) {
+      auto config_groups = app_mgr.list_config_groups_for_app(app);
+      auto it = find(
+                      config_groups.begin(),
+                      config_groups.end(), 
+                      ConfigGroup{config_group}
+                    );
+      if(it!=config_groups.end()) {
+        apps.push_back(app.name);
+      }
+    }
+  } else {
+    apps.push_back(config_slash_appname.substr(slash_pos+1));
+  }
+  return {config_group,apps};
+}
+
 void make(string config_slash_appname) {
   cout<<"Making: "<<config_slash_appname<<endl; //TODO
+  pair<string,vector<string>> config_and_apps =
+          __parse_config_slash_appname(config_slash_appname);
+  for(auto app: config_and_apps.second) {
+    cout<<"   - "<<app<<endl;
+    app_mgr.make_config_group_of_app({config_and_apps.first}, {app});
+  }
 }
 
 void install(string config_slash_appname) {
   cout<<"Installing: "<<config_slash_appname<<endl; //TODO
+  pair<string,vector<string>> config_and_apps =
+          __parse_config_slash_appname(config_slash_appname);
+  for(auto app: config_and_apps.second) {
+    cout<<"   - "<<app<<endl;
+    app_mgr.install_config_group_of_app({config_and_apps.first}, {app});
+  }
 }
