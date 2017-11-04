@@ -4,15 +4,16 @@
 #include "App.h"
 #include "ConfigGroup.h"
 
+#include <boost/filesystem.hpp>
 
 using namespace std;
+namespace fs = boost::filesystem;
 
 class AppMgr {
   private:
-    string path_to_dotcastle_dir;
+    fs::path dotcastle_dir_path;
   public:
-    AppMgr(string path_to_dotcastle_dir):
-      path_to_dotcastle_dir(path_to_dotcastle_dir) {};
+    AppMgr(string path_to_dotcastle_dir);
     list<App>         list_apps();
     list<ConfigGroup> list_config_groups_for_app(App app);
 

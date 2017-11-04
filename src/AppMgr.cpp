@@ -7,15 +7,14 @@
 using namespace std;
 namespace fs = boost::filesystem;
 
-fs::path get_dotcastle_dir_path(string path_to_dotcastle_dir) {
-  fs::path dotcastle_dir_path(path_to_dotcastle_dir);
+AppMgr::AppMgr(string path_to_dotcastle_dir) {
+  dotcastle_dir_path = path_to_dotcastle_dir;
   if(!fs::is_directory(dotcastle_dir_path))
     throw InvalidDotcastleDir();
-  return dotcastle_dir_path;
 }
 
+
 list<App> AppMgr::list_apps() {
-  auto dotcastle_dir_path = get_dotcastle_dir_path(path_to_dotcastle_dir);
   fs::directory_iterator dotcastle_dir_itr(dotcastle_dir_path);
   list<App> app_list;
   for(auto itr: dotcastle_dir_itr) {
@@ -27,7 +26,6 @@ list<App> AppMgr::list_apps() {
 }
 
 list<ConfigGroup> AppMgr::list_config_groups_for_app(App app) {
-  auto dotcastle_dir_path = get_dotcastle_dir_path(path_to_dotcastle_dir);
   auto app_dir_path = dotcastle_dir_path / app.name;
   if(!fs::is_directory(app_dir_path))
       throw NonExistentApp();
@@ -48,7 +46,6 @@ list<ConfigGroup> AppMgr::list_config_groups_for_app(App app) {
 
 void AppMgr::make_config_group_of_app(ConfigGroup cg, App app) {
   namespace proc = subprocess;
-  auto dotcastle_dir_path = get_dotcastle_dir_path(path_to_dotcastle_dir);
   auto app_dir_path = dotcastle_dir_path / app.name;
   if(!fs::is_directory(app_dir_path))
       throw NonExistentApp();
@@ -61,7 +58,6 @@ void AppMgr::make_config_group_of_app(ConfigGroup cg, App app) {
 
 void AppMgr::install_config_group_of_app(ConfigGroup cg, App app) {
   namespace proc = subprocess;
-  auto dotcastle_dir_path = get_dotcastle_dir_path(path_to_dotcastle_dir);
   auto app_dir_path = dotcastle_dir_path / app.name;
   if(!fs::is_directory(app_dir_path))
       throw NonExistentApp();
