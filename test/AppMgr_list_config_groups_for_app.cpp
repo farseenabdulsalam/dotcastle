@@ -9,14 +9,6 @@
 using namespace std;
 namespace fs = boost::filesystem;
 
-BOOST_FIXTURE_TEST_CASE (list_config_groups_for_app_invalid_dotcastle_dir,
-                         fixture_invalid_dotcastle_dir) {
-  // fs::path dotcastle_dir from fixture
-  AppMgr app_mgr(dotcastle_dir.string());
-  BOOST_CHECK_THROW(app_mgr.list_config_groups_for_app({"doesnt matter"}),
-                    InvalidDotcastleDir);
-}
-  
 BOOST_FIXTURE_TEST_CASE (list_config_groups_for_app_non_existent_app,
                          fixture_valid_dotcastle_dir) {
   // fs::path dotcastle_dir from fixture

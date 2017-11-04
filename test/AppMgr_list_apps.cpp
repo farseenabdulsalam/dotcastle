@@ -33,10 +33,3 @@ BOOST_FIXTURE_TEST_CASE (list_apps, fixture_valid_dotcastle_dir) {
   }
 }
 
-BOOST_FIXTURE_TEST_CASE (list_apps_invalid_dotcastle_dir,
-                         fixture_invalid_dotcastle_dir) {
-  // fs::path dotcastle_dir from fixture
-  AppMgr app_mgr(dotcastle_dir.string());
-  BOOST_CHECK_THROW(app_mgr.list_apps(),InvalidDotcastleDir);
-}
-
