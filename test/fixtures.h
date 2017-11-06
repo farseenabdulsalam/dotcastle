@@ -42,3 +42,15 @@ struct fixture_valid_config_file {
     fs::remove(config_file);
   }
 };
+
+struct fixture_invalid_config_file {
+  fs::path config_file;
+  fixture_invalid_config_file () { // setup
+    auto temp_path = fs::temp_directory_path();
+    config_file = temp_path / "temp_dotcastle.conf";
+    fs::remove_all(config_file);
+  }
+  ~fixture_invalid_config_file() { // teardown
+    fs::remove(config_file);
+  }
+};

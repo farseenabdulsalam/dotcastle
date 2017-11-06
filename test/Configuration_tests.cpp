@@ -24,3 +24,16 @@ BOOST_FIXTURE_TEST_CASE (configuration_read_test,
   Configuration config(config_file.string());
   BOOST_CHECK_EQUAL(config.get_dotcastle_dir(), dotcastle_dir);
 }
+
+BOOST_AUTO_TEST_CASE (xdg_config_test) {
+  BOOST_ERROR("Implement environment variable handling "
+              "for reading configuration files.");
+}
+
+BOOST_FIXTURE_TEST_CASE (configuration_read_nonexistent_file_test,
+                         fixture_invalid_config_file) {
+  // fs::path config_file from fixture
+  BOOST_CHECK_THROW(Configuration conf(config_file.string()), 
+                    ConfigurationFileDoesnotExist);
+}
+
