@@ -3,10 +3,13 @@
 #include <set>
 #include <map>
 #include <algorithm>
+#include <cstdlib>
 #include <boost/program_options.hpp>
 #include <boost/exception/all.hpp>
 #include <boost/filesystem.hpp>
 #include "AppMgr.h"
+#include "Configuration.h"
+#include "Exceptions.h"
 
 using namespace std;
 namespace po = boost::program_options;
@@ -14,7 +17,8 @@ namespace po = boost::program_options;
 // GLOBALS
 char *exec_name;                               // init by main as argv[0]
 po::options_description opts_desc;    
-AppMgr app_mgr("/home/farzeen/dotcastle.tmp"); // !!!! FIXME !!!!
+Configuration configuration;
+AppMgr app_mgr;
 // END OF GLOBALS
 
 void show_help();
@@ -24,6 +28,19 @@ void list_config_groups();
 void make(string config_slash_appname);
 void install(string config_slash_appname);
 
+void load_configuration_file() {
+  char *xdg_config_home = getenv("XDG_CONFIG_HOME");
+  if(xdg_config_home) {
+    try {
+      configuration = Configuration(string(xdg_config_home)+
+                                  "/dotcastle/dotcastle.conf");
+      app_mgr = AppMgr(configuration.get_dotcastle_dir());
+    } catch(ConfigurationFileDoesnotExist &e) {
+      char *home = getenv("HOME");
+      app_mgr = AppMgr(string(home)+"/dotcastle/");
+    }
+  }
+}
 
 void register_cli_options(/*global opts_desc*/) {
   opts_desc.add_options()
