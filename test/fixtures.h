@@ -32,3 +32,13 @@ struct fixture_invalid_dotcastle_dir : public fixture_base {
   }
 };
 
+struct fixture_valid_config_file {
+  fs::path config_file;
+  fixture_valid_config_file () { // setup
+    auto temp_path = fs::temp_directory_path();
+    config_file = temp_path / "temp_dotcastle.conf";
+  }
+  ~fixture_valid_config_file() { // teardown
+    fs::remove(config_file);
+  }
+};
