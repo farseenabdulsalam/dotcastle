@@ -1,3 +1,5 @@
+#ifndef EXCEPTIONS_H
+#define EXCEPTIONS_H
 
 class DotcastleError {};
 
@@ -11,3 +13,5 @@ class AppConfigGroupMakeFailed: public DotcastleError {};
 class ConfigurationFileDoesnotExist: public DotcastleError {};
 
 class InvalidConfigurationFile: public DotcastleError {};
+
+#endif

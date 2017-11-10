@@ -1,3 +1,6 @@
+#ifndef APP_H
+#define APP_H
+
 #include <string>
 using namespace std;
 struct App {
@@ -6,3 +9,5 @@ struct App {
     return name == app.name;
   }
 };
+
+#endif

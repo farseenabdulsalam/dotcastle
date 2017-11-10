@@ -1,3 +1,6 @@
+#ifndef CONFIG_GROUP_H
+#define CONFIG_GROUP_H
+
 #include <string>
 
 struct ConfigGroup {
@@ -7,3 +10,4 @@ struct ConfigGroup {
   }
 };
 
+#endif

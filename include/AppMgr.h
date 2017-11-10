@@ -1,3 +1,6 @@
+#ifndef APP_MGR_H
+#define APP_MGR_H
+
 #include <string>
 #include <list>
 
@@ -22,3 +25,4 @@ class AppMgr {
 
 };
 
+#endif
