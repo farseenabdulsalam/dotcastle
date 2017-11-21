@@ -8,6 +8,10 @@ class Configuration {
 
   public:
     string get_dotcastle_dir();
+
+   /* Currently, the caller is responsible for expanding env vars in 
+    * dotcastle_config_file path string.
+    * Should it be the responsibility of this class? */
     Configuration(string dotcastle_config_file);
 
   private:
