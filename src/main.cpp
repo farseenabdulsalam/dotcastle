@@ -1,3 +1,4 @@
+#include <memory>
 #include <iostream>
 #include <iterator>
 #include <set>
@@ -17,32 +18,41 @@ namespace po = boost::program_options;
 // GLOBALS
 char *exec_name;                               // init by main as argv[0]
 po::options_description opts_desc;    
-Configuration configuration;
-AppMgr app_mgr;
+auto configuration  = unique_ptr<Configuration>();
+auto app_mgr        = unique_ptr<AppMgr>();
 // END OF GLOBALS
 
 void show_help();
 void list_all();
 void list_apps();
 void list_config_groups();
+// Note:
+// Signatures of `make` and `install` reflects the CLI syntax
+// I don't think there's any significant reason to change that to 
+//    `make(string config, string appname)` 
+// instead of letting `make` and `install` split the string argument
 void make(string config_slash_appname);
 void install(string config_slash_appname);
 
-void load_configuration_file() {
+void load_configuration_file(unique_ptr<Configuration> &configuration,
+                             unique_ptr<AppMgr> &app_mgr) {
   char *xdg_config_home = getenv("XDG_CONFIG_HOME");
   if(xdg_config_home) {
     try {
-      configuration = Configuration(string(xdg_config_home)+
-                                  "/dotcastle/dotcastle.conf");
-      app_mgr = AppMgr(configuration.get_dotcastle_dir());
+      configuration = make_unique<Configuration>(
+                        string(xdg_config_home)+"/dotcastle/dotcastle.conf"
+                      );
+      app_mgr       = make_unique<AppMgr>(
+                        configuration->get_dotcastle_dir()
+                      );
     } catch(ConfigurationFileDoesnotExist &e) {
-      char *home = getenv("HOME");
-      app_mgr = AppMgr(string(home)+"/dotcastle/");
+      char *home    = getenv("HOME");
+      app_mgr       = make_unique<AppMgr>(string(home)+"/dotcastle/");
     }
   }
 }
 
-void register_cli_options(/*global opts_desc*/) {
+void register_cli_options(po::options_description &opts_desc) {
   opts_desc.add_options()
     ("help,h","Show help message.")
     ("list,l", "List all apps and config-groups hierarchially.")
@@ -96,7 +106,8 @@ void process_cli_options_values(const po::variables_map &vm) {
 
 int main(int argc, char **argv) {
   exec_name = argv[0];
-  register_cli_options();
+  register_cli_options(opts_desc);
+  load_configuration_file(configuration, app_mgr);
   po::variables_map vm;
   try {
     po::store(po::parse_command_line(argc,argv, opts_desc), vm);
@@ -116,9 +127,9 @@ void show_help() {
 
 void list_all() {
   map<string,vector<string>> config_group_apps_map;
-  auto apps = app_mgr.list_apps();
+  auto apps = app_mgr->list_apps();
   for(App app: apps) {
-    auto config_groups = app_mgr.list_config_groups_for_app(app);
+    auto config_groups = app_mgr->list_config_groups_for_app(app);
     for(ConfigGroup cg: config_groups) {
       config_group_apps_map[cg.name].push_back(app.name);
     }
@@ -134,9 +145,9 @@ void list_all() {
 
 void list_config_groups() {
   set<string> config_groups;
-  auto apps = app_mgr.list_apps();
+  auto apps = app_mgr->list_apps();
   for(App app: apps) {
-    auto config_groups_for_app = app_mgr.list_config_groups_for_app(app);
+    auto config_groups_for_app = app_mgr->list_config_groups_for_app(app);
     for(ConfigGroup cg: config_groups_for_app) {
       config_groups.insert(cg.name);
     }
@@ -149,7 +160,7 @@ void list_config_groups() {
 
 void list_apps() {
   cout<<"Listing all apps: "<<endl; 
-  auto apps = app_mgr.list_apps();
+  auto apps = app_mgr->list_apps();
   for(App app: apps)
     cout<<" - "<<app.name<<endl;
 }
@@ -163,8 +174,8 @@ __parse_config_slash_appname(string config_slash_appname) {
 
   if(slash_pos == string::npos || 
      slash_pos == config_slash_appname.size() - 1) {
-    for(auto app: app_mgr.list_apps()) {
-      auto config_groups = app_mgr.list_config_groups_for_app(app);
+    for(auto app: app_mgr->list_apps()) {
+      auto config_groups = app_mgr->list_config_groups_for_app(app);
       auto it = find(
                       config_groups.begin(),
                       config_groups.end(), 
@@ -186,7 +197,7 @@ void make(string config_slash_appname) {
           __parse_config_slash_appname(config_slash_appname);
   for(auto app: config_and_apps.second) {
     cout<<"   - "<<app<<endl;
-    app_mgr.make_config_group_of_app({config_and_apps.first}, {app});
+    app_mgr->make_config_group_of_app({config_and_apps.first}, {app});
   }
 }
 
@@ -196,6 +207,6 @@ void install(string config_slash_appname) {
           __parse_config_slash_appname(config_slash_appname);
   for(auto app: config_and_apps.second) {
     cout<<"   - "<<app<<endl;
-    app_mgr.install_config_group_of_app({config_and_apps.first}, {app});
+    app_mgr->install_config_group_of_app({config_and_apps.first}, {app});
   }
 }
