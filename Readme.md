@@ -2,7 +2,7 @@
 ###### Version 0.1b
 
 Do you find you .bashrc/.zshrc too large to maintain?
-Have you felt that it is finding and updating the right options in vimrc
+Have you felt that is finding and updating the right options in vimrc
 is a real headache?
 Do you have to maintain two versions of almost similar configuration file,
 because a few tweaks you made for your home computer are incompatible with
