@@ -82,7 +82,7 @@ Example:
                         // respective make scripts
 ```
 
-##Usage:
+## Usage:
 
 ```
 dotcastle
@@ -111,3 +111,20 @@ Example:
 dotcastle -m office_conf
 dotcastle -m office_conf/vim
 ```
+
+## What are .make and .install files
+Currently, `.make` and `.install` should be simple executables,
+preferably shell scripts or python scripts.
+They will be executed when `dotcastle` is called with
+`--make` or `--install` options respectively.
+
+## License
+This software is free as in free speech and free beer.
+Feel free to copy, modify or redistribute.
+
+## Contributing
+I would really appreciate any kind of contribution.
+If you have any suggestion, feature request or found any bugs,
+please open an issue.
+
+FOSS is awesome.
