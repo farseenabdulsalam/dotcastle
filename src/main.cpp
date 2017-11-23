@@ -42,6 +42,7 @@ void load_configuration_file(unique_ptr<Configuration> &configuration,
   char *xdg_config_home = getenv("XDG_CONFIG_HOME");
   char *home    	= getenv("HOME");
   auto dotcastle_config_file_path = string{};
+  auto dotcastle_dir_path	  = string{};
   if(xdg_config_home)
     dotcastle_config_file_path = string{xdg_config_home}+string{"/dotcastle/dotcastle.conf"};
   else
@@ -50,14 +51,16 @@ void load_configuration_file(unique_ptr<Configuration> &configuration,
     configuration = make_unique<Configuration>(
 		      dotcastle_config_file_path
                     );
-    app_mgr       = make_unique<AppMgr>(
-                      configuration->get_dotcastle_dir()
-                    );
+    dotcastle_dir_path = configuration->get_dotcastle_dir();
   } catch(ConfigurationFileDoesnotExist &e) {
     cerr<<"Warning: Failed to load config file from '"<<dotcastle_config_file_path<<"'."<<endl;
     cerr<<"Using '"<<home<<"/dotcastle/' as dotcastle directory."<<endl;
-    app_mgr       = make_unique<AppMgr>(string(home)+"/dotcastle/");
+    dotcastle_dir_path	       = string{home}+"/dotcastle/";
   }
+
+  app_mgr       = make_unique<AppMgr>(dotcastle_dir_path);
+  setenv("DOTCASTLE",dotcastle_dir_path.c_str(),1);
+
 }
 
 void register_cli_options(po::options_description &opts_desc) {
