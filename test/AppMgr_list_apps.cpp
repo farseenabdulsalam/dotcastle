@@ -33,3 +33,10 @@ BOOST_FIXTURE_TEST_CASE (list_apps, fixture_valid_dotcastle_dir) {
   }
 }
 
+BOOST_FIXTURE_TEST_CASE (list_apps_empty, fixture_valid_dotcastle_dir) {
+  // fs::path dotcastle_dir from fixture
+  AppMgr app_mgr(dotcastle_dir.string());
+  auto listed_apps = app_mgr.list_apps();
+  BOOST_CHECK_MESSAGE(/*ifnot*/ listed_apps.size()==0, "Length of listed_apps vector must be zero");
+}
+
