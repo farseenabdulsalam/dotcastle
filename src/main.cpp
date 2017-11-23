@@ -8,9 +8,12 @@
 #include <boost/program_options.hpp>
 #include <boost/exception/all.hpp>
 #include <boost/filesystem.hpp>
+#include <assert.h>
 #include "AppMgr.h"
 #include "Configuration.h"
 #include "Exceptions.h"
+
+#define NDEBUG
 
 using namespace std;
 namespace po = boost::program_options;
@@ -37,18 +40,23 @@ void install(string config_slash_appname);
 void load_configuration_file(unique_ptr<Configuration> &configuration,
                              unique_ptr<AppMgr> &app_mgr) {
   char *xdg_config_home = getenv("XDG_CONFIG_HOME");
-  if(xdg_config_home) {
-    try {
-      configuration = make_unique<Configuration>(
-                        string(xdg_config_home)+"/dotcastle/dotcastle.conf"
-                      );
-      app_mgr       = make_unique<AppMgr>(
-                        configuration->get_dotcastle_dir()
-                      );
-    } catch(ConfigurationFileDoesnotExist &e) {
-      char *home    = getenv("HOME");
-      app_mgr       = make_unique<AppMgr>(string(home)+"/dotcastle/");
-    }
+  char *home    	= getenv("HOME");
+  auto dotcastle_config_file_path = string{};
+  if(xdg_config_home)
+    dotcastle_config_file_path = string{xdg_config_home}+string{"/dotcastle/dotcastle.conf"};
+  else
+    dotcastle_config_file_path = string{home}+string{"/.dotcastle/dotcastle.conf"};
+  try {
+    configuration = make_unique<Configuration>(
+		      dotcastle_config_file_path
+                    );
+    app_mgr       = make_unique<AppMgr>(
+                      configuration->get_dotcastle_dir()
+                    );
+  } catch(ConfigurationFileDoesnotExist &e) {
+    cerr<<"Warning: Failed to load config file from '"<<dotcastle_config_file_path<<"'."<<endl;
+    cerr<<"Using '"<<home<<"/dotcastle/' as dotcastle directory."<<endl;
+    app_mgr       = make_unique<AppMgr>(string(home)+"/dotcastle/");
   }
 }
 
