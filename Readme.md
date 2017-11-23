@@ -20,8 +20,24 @@ Plus, you can share the common parts of a configuration file across configuratio
 
 
 ## Install
-Running `make` creates a single binary `dotcastle`.
+Running `make dotcastle` creates a single binary `dotcastle`.
 Copy it to `/usr/bin` or anywhere you wish.
+
+### Dependencies
+Dotcastle depends upon Boost Filesystem and Boost Unit test and cpp-subprocess libraries.
+
+* Boost libraries and header files must be installed using system package manager.
+  On Arch Linux, install the `boost` package.
+
+* Specify `--recursive` option during cloning the repo, or
+  Execute:
+  ```
+  git submodule init
+  git submodule update
+  ```
+
+  to pull in cpp-subprocess.
+
 
 ## Setting up your castle
 The configuration files are organized as:
