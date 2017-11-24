@@ -19,6 +19,7 @@ list<App> AppMgr::list_apps() {
   list<App> app_list;
   for(auto itr: dotcastle_dir_itr) {
     auto dir_ent_path = itr.path();
+    if(!fs::is_directory(dir_ent_path)) continue;
     auto app_name = dir_ent_path.filename().string(); 
     app_list.push_back(App {app_name});
   }
