@@ -2,7 +2,7 @@
 #include "Exceptions.h"
 #include <boost/filesystem.hpp>
 #include <boost/filesystem/convenience.hpp>
-#include "cpp-subprocess/subprocess.hpp" 
+#include "cpp-subprocess/subprocess.hpp"
 
 using namespace std;
 namespace fs = boost::filesystem;
@@ -20,7 +20,7 @@ list<App> AppMgr::list_apps() {
   for(auto itr: dotcastle_dir_itr) {
     auto dir_ent_path = itr.path();
     if(!fs::is_directory(dir_ent_path)) continue;
-    auto app_name = dir_ent_path.filename().string(); 
+    auto app_name = dir_ent_path.filename().string();
     app_list.push_back(App {app_name});
   }
   return app_list;
@@ -51,9 +51,9 @@ void AppMgr::make_config_group_of_app(ConfigGroup cg, App app) {
   if(!fs::is_directory(app_dir_path))
       throw NonExistentApp();
 
-  auto retcode = proc::call((app_dir_path/(cg.name+".make")).string(), 
+  auto retcode = proc::call((app_dir_path/(cg.name+".make")).string(),
                              proc::cwd{app_dir_path.string()});
-  if(retcode!=0) 
+  if(retcode!=0)
     throw AppConfigGroupMakeFailed();
 }
 
@@ -65,6 +65,6 @@ void AppMgr::install_config_group_of_app(ConfigGroup cg, App app) {
 
   auto retcode = proc::call((app_dir_path/(cg.name+".install")).string(),
                              proc::cwd{app_dir_path.string()});
-  if(retcode!=0) 
+  if(retcode!=0)
     throw AppConfigGroupMakeFailed();
 }

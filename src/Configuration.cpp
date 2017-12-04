@@ -17,5 +17,5 @@ Configuration::Configuration(string dotcastle_config_file) {
 string Configuration::get_dotcastle_dir() {
   return dotcastle_dir;
 }
-  
+
 
