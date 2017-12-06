@@ -97,6 +97,8 @@ Example:
                         // respective make scripts
 ```
 
+> See also: https://github.com/farseenabdulsalam/my-dotcastle
+
 ## Usage:
 
 ```
@@ -111,7 +113,7 @@ dotcastle -l|--list
        .. App2
        .. App3
 
-dotcastle -lc|--list-config-groups 
+dotcastle -lc|--list-config-groups
    Show the list of config groups
 
 dotcastle -la|--list-apps
@@ -119,7 +121,7 @@ dotcastle -la|--list-apps
 
 dotcastle -m|--make    <config-group>[/<app>]
 dotcastle -i|--install <config-group>[/<app>]
-  if <app> is omitted, all apps under the <config-group> are processed. 
+  if <app> is omitted, all apps under the <config-group> are processed.
 
 Example:
 
